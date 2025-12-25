@@ -26,7 +26,7 @@ jobs:
 
           echo "Ligando o codespace: $NAME"
 
-          # ESTE é o comando correto
-          gh codespace code -c "$NAME" -- .
+          # ESTE comando LIGA o Codespace
+          gh codespace code -c "$NAME"
 
           echo "Codespace iniciado com sucesso!"
