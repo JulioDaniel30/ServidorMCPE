@@ -10,16 +10,22 @@ jobs:
         run: |
           echo "${{ secrets.GH_PAT }}" | gh auth login --with-token
 
-      - name: Ligar Codespace do repositório
+      - name: Ligar Codespace e Crafty
         run: |
+          # Procura o nome técnico (ex: refactored-space-happiness-...)
           NAME=$(gh codespace list --repo "${{ github.repository }}" --json name --jq '.[0].name')
           
-          echo "Ligando a máquina..."
+          if [ -z "$NAME" ] || [ "$NAME" == "null" ]; then
+            echo "Erro: Nenhum Codespace encontrado para este repositório."
+            exit 1
+          fi
+
+          echo "A ligar o codespace: $NAME"
+          
+          # Comando resume para iniciar a máquina
           gh codespace resume -c "$NAME"
           
-          # Aguarda 10 segundos para o sistema carregar
-          sleep 10
+          # Comando extra para garantir que a máquina responde
+          gh codespace ports -c "$NAME"
           
-          echo "Enviando comando de início para o Crafty..."
-          # Este comando tenta rodar o script de boot do Crafty remotamente
-          gh codespace ssh -c "$NAME" -- "cd /workspaces/ServidorMCPE/crafty-4 && python3 main.py &"
+          echo "Comando enviado! O servidor estará online em 1-2 minutos."
