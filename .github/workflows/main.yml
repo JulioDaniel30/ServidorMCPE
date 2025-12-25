@@ -1,0 +1,16 @@
+name: Ligar Servidor Remotamente
+on:
+  workflow_dispatch: # Isso cria o botão manual
+
+jobs:
+  start-codespace:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ligar o Codespace
+        run: |
+          # Lista os codespaces e pega o nome do último criado
+          NAME=$(gh codespace list --json name --jq '.[0].name')
+          echo "Ligando o codespace: $NAME"
+          gh codespace resume -c "$NAME"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
