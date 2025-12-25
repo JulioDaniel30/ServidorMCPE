@@ -1,12 +1,10 @@
 name: Ligar Servidor Agora
-
 on:
   workflow_dispatch:
 
 jobs:
   start-codespace:
     runs-on: ubuntu-latest
-
     steps:
       - name: Autenticar GitHub CLI
         run: |
@@ -14,19 +12,17 @@ jobs:
 
       - name: Ligar Codespace do repositório
         run: |
-          NAME=$(gh codespace list \
-            --repo "${{ github.repository }}" \
-            --json name,state \
-            --jq '.[0].name')
-
-          if [ -z "$NAME" ] || [ "$NAME" = "null" ]; then
+          # Busca o nome técnico automático
+          NAME=$(gh codespace list --repo "${{ github.repository }}" --json name --jq '.[0].name')
+          
+          if [ -z "$NAME" ] || [ "$NAME" == "null" ]; then
             echo "Erro: Nenhum Codespace encontrado para este repositório."
             exit 1
           fi
 
           echo "Ligando o codespace: $NAME"
 
-          # ESTE comando LIGA o Codespace
-          gh codespace code -c "$NAME"
-
+          # O comando 'code --web' inicia a máquina sem precisar de interface local
+          gh codespace code -c "$NAME" --web
+          
           echo "Codespace iniciado com sucesso!"
