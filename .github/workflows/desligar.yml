@@ -11,8 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Forçar Desligamento
-        run: |
-          # Usando o nome exato da sua imagem
-          gh codespace stop -c refactored-space-happiness
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         run: |
+            echo "Tentando desligar o codespace..."
+            # Tenta desligar e mostra o erro se falhar
+            gh codespace stop -c refactored-space-happiness || gh codespace stop --list
+          env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
