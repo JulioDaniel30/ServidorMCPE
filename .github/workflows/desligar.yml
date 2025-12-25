@@ -2,13 +2,16 @@ name: Desligar Servidor Agora
 on:
   workflow_dispatch:
 
+permissions:
+  codespaces: write  # Permissão específica para desligar máquinas
+
 jobs:
   stop-codespace:
     runs-on: ubuntu-latest
     steps:
       - name: Forçar Desligamento
         run: |
-          # Procura o nome automático para não dar erro 404
+          # Busca o nome real do codespace deste repositório
           NAME=$(gh codespace list --repo ${{ github.repository }} --json name --jq '.[0].name')
           
           if [ -z "$NAME" ] || [ "$NAME" == "null" ]; then
