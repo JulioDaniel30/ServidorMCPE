@@ -2,7 +2,6 @@ name: Ligar Servidor Remotamente
 on:
   workflow_dispatch:
 
-# ADICIONE ESTAS 3 LINHAS ABAIXO:
 permissions:
   contents: write
 
@@ -12,7 +11,7 @@ jobs:
     steps:
       - name: Ligar o Codespace
         run: |
-          NAME=$(gh codespace list --json name --jq '.[0].name')
+          NAME=$(gh codespace list --repo ${{ github.repository }} --json name --jq '.[0].name')
           echo "Ligando o codespace: $NAME"
           gh codespace resume -c "$NAME"
         env:
