@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  codespaces: write
 
 jobs:
   stop-codespace:
@@ -11,15 +11,14 @@ jobs:
     steps:
       - name: Forçar Desligamento
         run: |
-          # Busca o nome real (interno) do codespace associado a este repositório
-          REAL_NAME=$(gh codespace list --repo ${{ github.repository }} --json name --jq '.[0].name')
+          # Busca o nome automaticamente e desliga
+          NAME=$(gh codespace list --repo ${{ github.repository }} --json name --jq '.[0].name')
           
-          if [ -z "$REAL_NAME" ] || [ "$REAL_NAME" == "null" ]; then
-            echo "Nenhum codespace ativo encontrado para este repositório."
-            exit 0
+          if [ -z "$NAME" ] || [ "$NAME" == "null" ]; then
+            echo "Nenhum codespace ativo encontrado."
+          else
+            echo "Desligando: $NAME"
+            gh codespace stop -c "$NAME"
           fi
-          
-          echo "Desligando o codespace real: $REAL_NAME"
-          gh codespace stop -c "$REAL_NAME"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
