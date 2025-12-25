@@ -1,0 +1,14 @@
+name: Desligar Servidor Agora
+on:
+  workflow_dispatch:
+
+jobs:
+  stop-codespace:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Forçar Desligamento
+        run: |
+          NAME=$(gh codespace list --json name --jq '.[0].name')
+          gh codespace stop -c "$NAME"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
