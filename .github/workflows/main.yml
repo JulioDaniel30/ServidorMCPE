@@ -1,18 +1,24 @@
-name: Ligar Servidor Remotamente
+name: Ligar Servidor Agora
 on:
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   start-codespace:
     runs-on: ubuntu-latest
     steps:
-      - name: Ligar o Codespace
+      - name: Autenticar GitHub CLI
         run: |
-          NAME=$(gh codespace list --repo ${{ github.repository }} --json name --jq '.[0].name')
+          echo "${{ secrets.GH_PAT }}" | gh auth login --with-token
+
+      - name: Ligar Codespace do repositório
+        run: |
+          # Busca o nome técnico automático
+          NAME=$(gh codespace list --repo "${{ github.repository }}" --json name --jq '.[0].name')
+          
+          if [ -z "$NAME" ] || [ "$NAME" == "null" ]; then
+            echo "Nenhum codespace encontrado para este repositório."
+            exit 1
+          fi
+
           echo "Ligando o codespace: $NAME"
           gh codespace resume -c "$NAME"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
