@@ -1,24 +1,28 @@
-name: Desligar Servidor Agora
+name: Ligar Servidor Agora
 on:
   workflow_dispatch:
 
 jobs:
-  stop-codespace:
+  start-codespace:
     runs-on: ubuntu-latest
     steps:
       - name: Autenticar GitHub CLI
         run: |
           echo "${{ secrets.GH_PAT }}" | gh auth login --with-token
 
-      - name: Desligar Codespace
+      - name: Ligar Codespace do repositório
         run: |
+          # Procura o nome técnico (ex: refactored-space-happiness-...)
           NAME=$(gh codespace list --repo "${{ github.repository }}" --json name --jq '.[0].name')
           
           if [ -z "$NAME" ] || [ "$NAME" == "null" ]; then
-            echo "Nenhum codespace ativo encontrado."
-            exit 0
+            echo "Erro: Nenhum Codespace encontrado para este repositório."
+            exit 1
           fi
 
-          echo "A desligar o codespace: $NAME"
-          # O comando 'stop' garante que a cobrança de horas pare
-          gh codespace stop -c "$NAME"
+          echo "A ligar o codespace: $NAME"
+          
+          # O comando 'resume' é obrigatório antes do '-c'
+          gh codespace resume -c "$NAME"
+          
+          echo "Comando enviado com sucesso!"
