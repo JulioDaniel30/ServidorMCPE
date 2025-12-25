@@ -1,10 +1,6 @@
 name: Desligar Servidor Agora
 on:
   workflow_dispatch:
-
-permissions:
-  codespaces: write  # Permissão específica para desligar máquinas
-
 jobs:
   stop-codespace:
     runs-on: ubuntu-latest
