@@ -1,6 +1,11 @@
 name: Ligar Servidor Remotamente
 on:
-  workflow_dispatch: # Isso cria o botão manual
+  workflow_dispatch:
+
+# ADICIONE ESTAS 3 LINHAS ABAIXO:
+permissions:
+  contents: write
+  codespaces: write
 
 jobs:
   start-codespace:
@@ -8,7 +13,6 @@ jobs:
     steps:
       - name: Ligar o Codespace
         run: |
-          # Lista os codespaces e pega o nome do último criado
           NAME=$(gh codespace list --json name --jq '.[0].name')
           echo "Ligando o codespace: $NAME"
           gh codespace resume -c "$NAME"
