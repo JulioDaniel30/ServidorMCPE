@@ -2,13 +2,23 @@ name: Desligar Servidor Agora
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+  codespaces: write
+
 jobs:
   stop-codespace:
     runs-on: ubuntu-latest
     steps:
       - name: Forçar Desligamento
         run: |
+          # Pega o nome do primeiro codespace da lista
           NAME=$(gh codespace list --json name --jq '.[0].name')
+          if [ -z "$NAME" ]; then
+            echo "Nenhum codespace encontrado."
+            exit 1
+          fi
+          echo "Desligando o codespace: $NAME"
           gh codespace stop -c "$NAME"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
