@@ -2,9 +2,6 @@ name: Desligar Servidor Agora
 on:
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
   stop-codespace:
     runs-on: ubuntu-latest
