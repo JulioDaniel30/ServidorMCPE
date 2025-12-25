@@ -5,7 +5,6 @@ on:
 # ADICIONE ESTAS 3 LINHAS ABAIXO:
 permissions:
   contents: write
-  codespaces: write
 
 jobs:
   start-codespace:
