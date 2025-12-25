@@ -1,20 +1,30 @@
 name: Desligar Servidor Agora
+
 on:
   workflow_dispatch:
+
 jobs:
   stop-codespace:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Forçar Desligamento
+      - name: Autenticar GitHub CLI
         run: |
-          # Busca o nome real do codespace deste repositório
-          NAME=$(gh codespace list --repo ${{ github.repository }} --json name --jq '.[0].name')
-          
-          if [ -z "$NAME" ] || [ "$NAME" == "null" ]; then
+          echo "${{ secrets.GH_PAT }}" | gh auth login --with-token
+
+      - name: Desligar Codespaces do repositório
+        run: |
+          CODESPACES=$(gh codespace list \
+            --repo "${{ github.repository }}" \
+            --json name \
+            --jq '.[].name')
+
+          if [ -z "$CODESPACES" ]; then
             echo "Nenhum codespace ativo encontrado."
-          else
+            exit 0
+          fi
+
+          for NAME in $CODESPACES; do
             echo "Desligando o codespace: $NAME"
             gh codespace stop -c "$NAME"
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          done
