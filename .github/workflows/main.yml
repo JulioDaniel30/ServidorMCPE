@@ -10,16 +10,19 @@ jobs:
         run: |
           echo "${{ secrets.GH_PAT }}" | gh auth login --with-token
 
-      - name: Ligar Codespaces do repositório
+      - name: Ligar Codespace do repositório
         run: |
-          # Captura o nome técnico exato mostrado na sua imagem 12
+          # Busca o nome técnico atual do codespace
           NAME=$(gh codespace list --repo "${{ github.repository }}" --json name --jq '.[0].name')
           
           if [ -z "$NAME" ] || [ "$NAME" == "null" ]; then
-            echo "Nenhum codespace ativo encontrado."
-            exit 0
+            echo "Erro: Não foi encontrado nenhum Codespace para este repositório."
+            exit 1
           fi
 
-          echo "Ligando o codespace: $NAME"
-          # Adicionado 'resume' antes da flag -c para corrigir o erro da Imagem 12
-          gh codespace resume -c "$NAME"
+          echo "A tentar ligar o codespace: $NAME"
+          
+          # Tenta o comando resume, se falhar tenta abrir uma porta (isso força o ligamento)
+          gh codespace resume -c "$NAME" || gh codespace ports -c "$NAME"
+          
+          echo "Comando enviado com sucesso!"
