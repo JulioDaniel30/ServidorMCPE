@@ -1,12 +1,10 @@
 name: Ligar Servidor Agora
-
 on:
   workflow_dispatch:
 
 jobs:
   start-codespace:
     runs-on: ubuntu-latest
-
     steps:
       - name: Autenticar GitHub CLI
         run: |
@@ -14,17 +12,14 @@ jobs:
 
       - name: Ligar Codespaces do repositório
         run: |
-          CODESPACES=$(gh codespace list \
-            --repo "${{ github.repository }}" \
-            --json name,state \
-            --jq '.[] | select(.state != "Available") | .name')
-
-          if [ -z "$CODESPACES" ]; then
-            echo "Nenhum codespace desligado encontrado (todos já estão ligados)."
+          # Captura o nome técnico exato mostrado na sua imagem 12
+          NAME=$(gh codespace list --repo "${{ github.repository }}" --json name --jq '.[0].name')
+          
+          if [ -z "$NAME" ] || [ "$NAME" == "null" ]; then
+            echo "Nenhum codespace ativo encontrado."
             exit 0
           fi
 
-          for NAME in $CODESPACES; do
-            echo "Ligando o codespace: $NAME"
-            gh codespace resume -c "$NAME"
-          done
+          echo "Ligando o codespace: $NAME"
+          # Adicionado 'resume' antes da flag -c para corrigir o erro da Imagem 12
+          gh codespace resume -c "$NAME"
